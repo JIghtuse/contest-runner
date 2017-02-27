@@ -13,7 +13,19 @@ struct Testcase {
     output: String,
 }
 
-fn get_testcases() -> Result<Vec<Testcase>, io::Error> {
+enum Error {
+    Io(io::Error),
+    TooManyInputs,
+    TooManyOutputs,
+}
+
+impl std::convert::From<io::Error> for Error {
+    fn from(e: io::Error) -> Self {
+        Error::Io(e)
+    }
+}
+
+fn get_testcases() -> Result<Vec<Testcase>, Error> {
     let input_re = Regex::new(r"input.*").unwrap();
     let output_re = Regex::new(r"output.*").unwrap();
 
@@ -31,8 +43,10 @@ fn get_testcases() -> Result<Vec<Testcase>, io::Error> {
             outputs.push(output[0].to_string());
         }
     }
-    if inputs.len() != outputs.len() {
-        return Err(io::Error::new(io::ErrorKind::Other, "mismatched input/output"));
+    if inputs.len() < outputs.len() {
+        return Err(Error::TooManyOutputs)
+    } else if inputs.len() > outputs.len() {
+        return Err(Error::TooManyInputs)
     }
     while !inputs.is_empty() {
         testcases.push(Testcase {
@@ -86,7 +100,9 @@ fn main() {
             }
             println!();
         }
-        Err(e) => println!("{}", e),
+        Err(Error::Io(e)) => println!("I/O error: {}", e),
+        Err(Error::TooManyInputs) => println!("There are more inputs than outputs"),
+        Err(Error::TooManyOutputs) => println!("There are more outputs than inputs"),
     }
     if !failed_testcases.is_empty() {
         println!("Failed testcases:");
