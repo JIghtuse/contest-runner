@@ -15,8 +15,8 @@ struct Testcase {
 
 enum Error {
     Io(io::Error),
-    TooManyInputs,
-    TooManyOutputs,
+    TooManyInputs((BinaryHeap<String>, BinaryHeap<String>)),
+    TooManyOutputs((BinaryHeap<String>, BinaryHeap<String>)),
 }
 
 impl std::convert::From<io::Error> for Error {
@@ -33,9 +33,8 @@ fn get_testcases() -> Result<Vec<Testcase>, Error> {
     let mut inputs = BinaryHeap::new();
     let mut outputs = BinaryHeap::new();
 
-    for entry in try!(fs::read_dir(".")) {
-        let path = try!(entry);
-        let path = path.path().into_os_string();
+    for entry in fs::read_dir(".")? {
+        let path = entry?.path().into_os_string();
         if let Some(input) = input_re.captures(path.to_str().unwrap()) {
             inputs.push(input[0].to_string());
         }
@@ -44,9 +43,9 @@ fn get_testcases() -> Result<Vec<Testcase>, Error> {
         }
     }
     if inputs.len() < outputs.len() {
-        return Err(Error::TooManyOutputs)
+        return Err(Error::TooManyOutputs((inputs, outputs)));
     } else if inputs.len() > outputs.len() {
-        return Err(Error::TooManyInputs)
+        return Err(Error::TooManyInputs((inputs, outputs)));
     }
     while !inputs.is_empty() {
         testcases.push(Testcase {
@@ -89,6 +88,7 @@ fn main() {
     let mut failed_testcases = vec![];
     match get_testcases() {
         Ok(testcases) => {
+            println!("{} testcases found", testcases.len());
             for testcase in testcases {
                 match run_testcase(binary, &testcase) {
                     Ok(_) => print!("."),
@@ -101,8 +101,20 @@ fn main() {
             println!();
         }
         Err(Error::Io(e)) => println!("I/O error: {}", e),
-        Err(Error::TooManyInputs) => println!("There are more inputs than outputs"),
-        Err(Error::TooManyOutputs) => println!("There are more outputs than inputs"),
+        Err(Error::TooManyInputs((i, o))) => {
+            println!("There are more inputs than outputs.
+Inputs : {:?}
+Outputs: {:?}",
+                     i,
+                     o);
+        }
+        Err(Error::TooManyOutputs((i, o))) => {
+            println!("There are more outputs than inputs.
+Inputs : {:?}
+Outputs: {:?}",
+                     i,
+                     o);
+        }
     }
     if !failed_testcases.is_empty() {
         println!("Failed testcases:");
