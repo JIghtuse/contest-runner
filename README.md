@@ -7,8 +7,9 @@ Looks for files in current directory with names like:
     output01.txt
     output02.txt
 
-And executes binary file on each of the input file contents, comparing output
-with corresponding output file contents. Reports number of failures/successes.
+And executes binary file (`a.out` or specified as a first argument) on each of
+the input file contents, comparing output with corresponding output file
+contents. Reports number of failures/successes.
 
 ## Usage example
 

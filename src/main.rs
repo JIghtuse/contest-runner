@@ -84,14 +84,18 @@ fn run_testcase(binary: &str, testcase: &Testcase) -> Result<(), io::Error> {
 }
 
 fn main() {
-    let binary = "./a.out";
+    let binary = if let Some(name) = std::env::args().nth(2) {
+        name
+    } else {
+        String::from("./a.out")
+    };
 
     let mut failed_testcases = vec![];
     match get_testcases() {
         Ok(testcases) => {
             println!("{} testcases found", testcases.len());
             for testcase in testcases {
-                match run_testcase(binary, &testcase) {
+                match run_testcase(&binary, &testcase) {
                     Ok(_) => print!("."),
                     Err(e) => {
                         failed_testcases.push((testcase, e));
