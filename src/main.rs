@@ -59,6 +59,7 @@ fn get_testcases() -> Result<Vec<Testcase>, Error> {
 fn run_testcase(binary: &str, testcase: &Testcase) -> Result<(), io::Error> {
     let process = Command::new(binary).stdin(Stdio::piped())
         .stdout(Stdio::piped())
+        .stderr(Stdio::null())
         .spawn()?;
     let mut f = File::open(&testcase.input)?;
     let mut inp = String::new();
