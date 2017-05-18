@@ -122,6 +122,7 @@ Outputs: {:?}",
         for (testcase, e) in failed_testcases {
             println!("{:?}:\n{}\n", testcase, e);
         }
+        std::process::exit(1);
     } else {
         println!("OK");
     }
