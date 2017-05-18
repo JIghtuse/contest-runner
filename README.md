@@ -9,3 +9,21 @@ Looks for files in current directory with names like:
 
 And executes binary file on each of the input file contents, comparing output
 with corresponding output file contents. Reports number of failures/successes.
+
+## Usage example
+
+    $ contest_runner
+    6 testcases found
+    ...E..
+    Failed testcases:
+    Testcase { input: "input03.txt", output: "output03.txt" }:
+      Expected: 'Name1
+    Not Found!
+    HelloWorld
+    Fsa
+    '
+      Actual:   'Name1
+    Not Found!
+    HelloWorld
+    Fsad
+    '
