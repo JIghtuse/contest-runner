@@ -1,3 +1,4 @@
+extern crate diff;
 extern crate regex;
 
 use std::fs::File;
@@ -72,14 +73,20 @@ fn run_testcase(binary: &str, testcase: &Testcase) -> Result<(), io::Error> {
 
     let mut out = String::new();
     process.stdout.unwrap().read_to_string(&mut out)?;
+
+
     if out == out_expected {
         Ok(())
     } else {
-        Err(io::Error::new(io::ErrorKind::Other,
-                           format!("  Expected: '{}'
-  Actual:   '{}'",
-                                   out_expected,
-                                   out)))
+        let mut s = String::new();
+        for diff in diff::lines(&out, &out_expected) {
+            s += &match diff {
+                diff::Result::Left(l)    => format!("-{}\n", l),
+                diff::Result::Both(l, _) => format!(" {}\n", l),
+                diff::Result::Right(r)   => format!("+{}\n", r),
+            };
+        }
+        Err(io::Error::new(io::ErrorKind::Other, s))
     }
 }
 
