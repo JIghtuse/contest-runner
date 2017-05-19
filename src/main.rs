@@ -97,6 +97,11 @@ fn main() {
         String::from("./a.out")
     };
 
+    if !std::path::Path::new(&binary).exists() {
+        println!("Binary {} does not exist", binary);
+        std::process::exit(1);
+    }
+
     let mut failed_testcases = vec![];
     match get_testcases() {
         Ok(testcases) => {
