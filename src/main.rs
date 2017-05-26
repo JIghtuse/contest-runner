@@ -75,7 +75,7 @@ fn run_testcase(binary: &str, testcase: &Testcase) -> Result<(), io::Error> {
     process.stdout.unwrap().read_to_string(&mut out)?;
 
 
-    if out == out_expected {
+    if out.trim() == out_expected.trim() {
         Ok(())
     } else {
         let mut s = String::new();
