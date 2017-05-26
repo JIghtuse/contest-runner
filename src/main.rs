@@ -91,7 +91,7 @@ fn run_testcase(binary: &str, testcase: &Testcase) -> Result<(), io::Error> {
 }
 
 fn main() {
-    let binary = if let Some(name) = std::env::args().nth(2) {
+    let binary = if let Some(name) = std::env::args().nth(1) {
         name
     } else {
         String::from("./a.out")
