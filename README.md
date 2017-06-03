@@ -26,9 +26,3 @@ contents. Reports number of failures/successes.
      HelloWorld
     -Fsad
     +Fsa
-
-## TODO
-
-- [ ] Add option to run tests as a stream (line by line; probably useful for non-terminating programs).
-- [ ] Trim lines to avoid spaces false positives.
-- [ ] Pick a crate to colorize output and use it.
